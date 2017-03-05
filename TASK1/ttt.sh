@@ -27,8 +27,6 @@ player1Str=$green"Player One"$reset
 player2Str=$blue"Player Two"$reset
 
 
-# TODO Убрать moveNow, лишние функции, добавить зрителя, выход, удаление файлов по прерываннию
-
 # Проверяем есть ли первый игрок
 function firstPlayerCheck() {
     local  __resultvar=$1
@@ -385,6 +383,5 @@ if [ $role -eq 1 ]; then
 		else 
 			spectatorGame
 		fi
-		
 fi
 
