@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 
-long long int count_numbers = 0; // счетчик количества чисел в массиве
+long long int count_numbers = 0; // СЃС‡РµС‚С‡РёРє РєРѕР»РёС‡РµСЃС‚РІР° С‡РёСЃРµР» РІ РјР°СЃСЃРёРІРµ
 
 typedef enum
 {
@@ -16,15 +16,15 @@ typedef enum
     WRITE_ERR
 } ErrorCode;
 
-// Текстовое содержание ошибок
+// РўРµРєСЃС‚РѕРІРѕРµ СЃРѕРґРµСЂР¶Р°РЅРёРµ РѕС€РёР±РѕРє
 const char* errorDesc[] =
 {
-    "Должно быть не менее двух аргументов - имен файлов.\n",
-    "Нет прав на запись выходного файла или файл уже существует.\n",
-    "Не удалось открыть входной файл.\n",
-    "Недостаточно памяти для работы программы.\n",
-    "Число в файле слишком большое.\n",
-    "Не удалось произвести запись файла.\n"
+    "Р”РѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ РјРµРЅРµРµ РґРІСѓС… Р°СЂРіСѓРјРµРЅС‚РѕРІ - РёРјРµРЅ С„Р°Р№Р»РѕРІ.\n",
+    "РќРµС‚ РїСЂР°РІ РЅР° Р·Р°РїРёСЃСЊ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р° РёР»Рё С„Р°Р№Р» СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.\n",
+    "РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ РІС…РѕРґРЅРѕР№ С„Р°Р№Р».\n",
+    "РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїР°РјСЏС‚Рё РґР»СЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹.\n",
+    "Р§РёСЃР»Рѕ РІ С„Р°Р№Р»Рµ СЃР»РёС€РєРѕРј Р±РѕР»СЊС€РѕРµ.\n",
+    "РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРѕРёР·РІРµСЃС‚Рё Р·Р°РїРёСЃСЊ С„Р°Р№Р»Р°.\n"
 };
 
 
@@ -34,55 +34,55 @@ int printError(ErrorCode c)
     exit(1);
 }
 
-// Получить дескриптор входного файла, если можно
+// РџРѕР»СѓС‡РёС‚СЊ РґРµСЃРєСЂРёРїС‚РѕСЂ РІС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°, РµСЃР»Рё РјРѕР¶РЅРѕ
 int getInputFileDescriptor(char *name)
 {
     int fd = open(name, O_RDONLY);
     return (fd < 0) ? printError(OPEN_INP_ERR) : fd;
 }
 
-// Получить дескриптор выходного файла, если можно
+// РџРѕР»СѓС‡РёС‚СЊ РґРµСЃРєСЂРёРїС‚РѕСЂ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°, РµСЃР»Рё РјРѕР¶РЅРѕ
 int getOutputFileDescriptor(char *name)
 {
     int fd = open(name, O_WRONLY|O_EXCL|O_CREAT, 0666);
     return (fd < 0) ? printError(OPEN_OUT_ERR) : fd;
 }
 
-// Функция сравнения по возрастанию
+// Р¤СѓРЅРєС†РёСЏ СЃСЂР°РІРЅРµРЅРёСЏ РїРѕ РІРѕР·СЂР°СЃС‚Р°РЅРёСЋ
 int cmpfunc (const void *a, const void *b)
 {
    return (*(long long int*)a - *(long long int*)b);
 }
 
-// Получить все числа из файла и добавить в массив
-void getNumbers(int fd, long long int* numbers_arr) 
-{	
+// РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ С‡РёСЃР»Р° РёР· С„Р°Р№Р»Р° Рё РґРѕР±Р°РІРёС‚СЊ РІ РјР°СЃСЃРёРІ
+void getNumbers(int fd, long long int* numbers_arr)
+{
 	char cur_number[21];
 	int cur_size = 0;
-	char byte;	
-	
-	while (read(fd, &byte, 1) > 0) 
+	char byte;
+
+	while (read(fd, &byte, 1) > 0)
 	{
-		 if ((byte >= '0' && byte <= '9') || (byte == '-' && cur_size == 0)) 
+		 if ((byte >= '0' && byte <= '9') || (byte == '-' && cur_size == 0))
 		 {
-			// Накапливаем число
-			if (cur_size >= 20) 
+			// РќР°РєР°РїР»РёРІР°РµРј С‡РёСЃР»Рѕ
+			if (cur_size >= 20)
 			{
 				printError(TOO_LARGE_NUMBER);
 			};
-			
+
 			cur_number[cur_size] = byte;
 			cur_size++;
 		 }
-		 else 
+		 else
 		 {
-			if (cur_size > 0 && !(cur_size == 1 && cur_number[0] == '-')) 
+			if (cur_size > 0 && !(cur_size == 1 && cur_number[0] == '-'))
 			{
-				// Добавляем накопленное число в массив
+				// Р”РѕР±Р°РІР»СЏРµРј РЅР°РєРѕРїР»РµРЅРЅРѕРµ С‡РёСЃР»Рѕ РІ РјР°СЃСЃРёРІ
 				long long int number = atoll(cur_number);
 				count_numbers++;
 				numbers_arr = realloc(numbers_arr, count_numbers * sizeof(long long int));
-				if (numbers_arr == NULL) 
+				if (numbers_arr == NULL)
 				{
 					printError(NOT_ENOUGH_MEMORY);
 				};
@@ -101,28 +101,28 @@ int main(int argc, char *argv[])
     {
         printError(ARG_MISS);
     };
-	
-	// Получение дескрипторов файлов
+
+	// РџРѕР»СѓС‡РµРЅРёРµ РґРµСЃРєСЂРёРїС‚РѕСЂРѕРІ С„Р°Р№Р»РѕРІ
 	int input_fd[argc-2];
     for (int i=0; i < argc-2; input_fd[i] = getInputFileDescriptor(argv[i+1]), i++);
 	int output_fd = getOutputFileDescriptor(argv[argc-1]);
-	
-	// Инициализация массива чисел
+
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјР°СЃСЃРёРІР° С‡РёСЃРµР»
 	long long int *numbers_arr = (long long int*) malloc(0 * sizeof(long long int));
     if (numbers_arr == NULL)
 	{
 		printError(NOT_ENOUGH_MEMORY);
     };
-	
-	// Получение массива чисел из всех файлов
-	for (int i=0; i < argc-2; i++) 
+
+	// РџРѕР»СѓС‡РµРЅРёРµ РјР°СЃСЃРёРІР° С‡РёСЃРµР» РёР· РІСЃРµС… С„Р°Р№Р»РѕРІ
+	for (int i=0; i < argc-2; i++)
 	{
 		getNumbers(input_fd[i], numbers_arr);
 	}
 
 	qsort(numbers_arr, count_numbers, sizeof(long long int), cmpfunc);
-	
-	// Печать результата в файл
+
+	// РџРµС‡Р°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚Р° РІ С„Р°Р№Р»
 	for (int i=0; i<count_numbers; i++) 
 	{
         if (dprintf(output_fd, "%lld\n", numbers_arr[i]) <= 0) 
