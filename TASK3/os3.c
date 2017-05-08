@@ -10,9 +10,9 @@ typedef enum
 {
     ARG_MISS = 0,
     OPEN_OUT_ERR,
-	OPEN_INP_ERR,
-	NOT_ENOUGH_MEMORY,
-	TOO_LARGE_NUMBER,
+    OPEN_INP_ERR,
+    NOT_ENOUGH_MEMORY,
+    TOO_LARGE_NUMBER,
     WRITE_ERR
 } ErrorCode;
 
@@ -57,42 +57,42 @@ int cmpfunc (const void *a, const void *b)
 // Получить все числа из файла и добавить в массив
 void getNumbers(int fd, long long int* numbers_arr)
 {
-	char cur_number[21];
-	int cur_size = 0;
-	char byte;
+    char cur_number[21];
+    int cur_size = 0;
+    char byte;
 
-	while (read(fd, &byte, 1) > 0)
-	{
-		 if ((byte >= '0' && byte <= '9') || (byte == '-' && cur_size == 0))
-		 {
-			// Накапливаем число
-			if (cur_size >= 20)
-			{
-				printError(TOO_LARGE_NUMBER);
-			};
+    while (read(fd, &byte, 1) > 0)
+    {
+         if ((byte >= '0' && byte <= '9') || (byte == '-' && cur_size == 0))
+         {
+            // Накапливаем число
+            if (cur_size >= 20)
+            {
+                printError(TOO_LARGE_NUMBER);
+            };
 
-			cur_number[cur_size] = byte;
-			cur_size++;
-		 }
-		 else
-		 {
-			if (cur_size > 0 && !(cur_size == 1 && cur_number[0] == '-'))
-			{
-				// Добавляем накопленное число в массив
-				long long int number = atoll(cur_number);
-				count_numbers++;
-				numbers_arr = realloc(numbers_arr, count_numbers * sizeof(long long int));
-				if (numbers_arr == NULL)
-				{
-					printError(NOT_ENOUGH_MEMORY);
-				};
-				numbers_arr[count_numbers-1] = number;
-			};
-			cur_size = 0;
-			memset(&cur_number[0], 0, sizeof(cur_number));
-		 }
-	}
-	close(fd);
+            cur_number[cur_size] = byte;
+            cur_size++;
+         }
+         else
+         {
+            if (cur_size > 0 && !(cur_size == 1 && cur_number[0] == '-'))
+            {
+                // Добавляем накопленное число в массив
+                long long int number = atoll(cur_number);
+                count_numbers++;
+                numbers_arr = realloc(numbers_arr, count_numbers * sizeof(long long int));
+                if (numbers_arr == NULL)
+                {
+                    printError(NOT_ENOUGH_MEMORY);
+                };
+                numbers_arr[count_numbers-1] = number;
+            };
+            cur_size = 0;
+            memset(&cur_number[0], 0, sizeof(cur_number));
+         }
+    }
+    close(fd);
 }
 
 int main(int argc, char *argv[])
@@ -102,35 +102,35 @@ int main(int argc, char *argv[])
         printError(ARG_MISS);
     };
 
-	// Получение дескрипторов файлов
-	int input_fd[argc-2];
+    // Получение дескрипторов файлов
+    int input_fd[argc-2];
     for (int i=0; i < argc-2; input_fd[i] = getInputFileDescriptor(argv[i+1]), i++);
-	int output_fd = getOutputFileDescriptor(argv[argc-1]);
+    int output_fd = getOutputFileDescriptor(argv[argc-1]);
 
-	// Инициализация массива чисел
-	long long int *numbers_arr = (long long int*) malloc(0 * sizeof(long long int));
+    // Инициализация массива чисел
+    long long int *numbers_arr = (long long int*) malloc(0 * sizeof(long long int));
     if (numbers_arr == NULL)
-	{
-		printError(NOT_ENOUGH_MEMORY);
+    {
+        printError(NOT_ENOUGH_MEMORY);
     };
 
-	// Получение массива чисел из всех файлов
-	for (int i=0; i < argc-2; i++)
-	{
-		getNumbers(input_fd[i], numbers_arr);
-	}
+    // Получение массива чисел из всех файлов
+    for (int i=0; i < argc-2; i++)
+    {
+        getNumbers(input_fd[i], numbers_arr);
+    }
 
-	qsort(numbers_arr, count_numbers, sizeof(long long int), cmpfunc);
+    qsort(numbers_arr, count_numbers, sizeof(long long int), cmpfunc);
 
-	// Печать результата в файл
-	for (int i=0; i<count_numbers; i++) 
-	{
+    // Печать результата в файл
+    for (int i=0; i<count_numbers; i++) 
+    {
         if (dprintf(output_fd, "%lld\n", numbers_arr[i]) <= 0) 
-		{
-			printError(WRITE_ERR);
-		}
+        {
+            printError(WRITE_ERR);
+        }
     };
     close(output_fd);
-	
+    
     return 0;
 };

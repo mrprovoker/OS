@@ -10,9 +10,9 @@ const int PORTNO = 15015;
 
 typedef enum
 {
-	OPEN_SOCK_ERR=0,
-	GET_HOST_ERR,
-	CONNECT_SOCK_ERR
+    OPEN_SOCK_ERR=0,
+    GET_HOST_ERR,
+    CONNECT_SOCK_ERR
 } ErrorCode;
 
 // Текстовое содержание ошибок
@@ -37,15 +37,15 @@ int main(int argc, char *argv[])
     struct hostent *server;
 
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) 
-	{
-		printError(OPEN_SOCK_ERR);
-	}
+    if (sockfd < 0) 
+    {
+        printError(OPEN_SOCK_ERR);
+    }
 
     server = gethostbyname("localhost");
     if (server == NULL) 
-	{
-		printError(GET_HOST_ERR);
+    {
+        printError(GET_HOST_ERR);
     };
 
     serv_addr.sin_family = AF_INET;
@@ -53,20 +53,20 @@ int main(int argc, char *argv[])
     serv_addr.sin_port = htons(PORTNO);
 
     if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) 
-	{
-		printError(CONNECT_SOCK_ERR);
+    {
+        printError(CONNECT_SOCK_ERR);
     }
 
     char symbol[2];
     while (read(sockfd, symbol, 1) > 0) 
-	{
+    {
         symbol[1] = 0;
         if (symbol[0] == 1 || symbol[0] == 0) 
-		{
+        {
             printf("%d", symbol[0]);
         } 
-		else 
-		{
+        else 
+        {
             printf("%s", symbol);
         };
     };
