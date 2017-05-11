@@ -54,6 +54,17 @@ FILE* printError(ErrorCode c)
 }
 
 
+void printField() {
+    for (int i=0; i<ROWS; i++) {
+        for (int j=0; j<COLS; j++) {
+            printf("%d", field[i][j]);
+        };
+        printf("\n");
+    };
+    printf("-----------------------------\n");
+}
+
+
 // Функция делает шаг игры жизнь
 void logicMove() 
 {
@@ -172,6 +183,7 @@ void writeToNewsock(int sockfd)
 void gameTimer(int sig) 
 {
     alarm(1);
+    printField();
     FILE *temp = getTempFileW();
     for (int i=0; i<ROWS; i++) 
     {
