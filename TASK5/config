@@ -1,0 +1,3 @@
+W: /usr/bin/python3 simple.py
+R: /usr/bin/python3 failProg.py
+W: /bin/sleep 1
